@@ -1,0 +1,58 @@
+package com.example.demo.serviceimpl;
+
+import com.example.demo.entity.DeviceProfile;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.repository.DeviceProfileRepository;
+import com.example.demo.service.DeviceProfileService;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class DeviceProfileServiceImpl implements DeviceProfileService {
+
+    private final DeviceProfileRepository deviceRepo;
+
+    public DeviceProfileServiceImpl(DeviceProfileRepository deviceRepo) {
+        this.deviceRepo = deviceRepo;
+    }
+
+    @Override
+    public DeviceProfile registerDevice(DeviceProfile device) {
+        // Check uniqueness per user
+        List<DeviceProfile> existingDevices = deviceRepo.findByUserId(device.getUserId());
+        boolean exists = existingDevices.stream()
+                .anyMatch(d -> d.getDeviceId().equals(device.getDeviceId()));
+        if (exists) {
+            throw new BadRequestException("Device with ID already exists for this user");
+        }
+
+        // Set lastSeen to now
+        device.setLastSeen(LocalDateTime.now());
+
+        return deviceRepo.save(device);
+    }
+
+    @Override
+    public DeviceProfile updateTrustStatus(Long id, boolean trust) {
+        DeviceProfile device = deviceRepo.findById(id)
+                .orElseThrow(() -> new BadRequestException("Device not found with id: " + id));
+
+        device.setIsTrusted(trust);
+        device.setLastSeen(LocalDateTime.now());
+
+        return deviceRepo.save(device);
+    }
+
+    @Override
+    public List<DeviceProfile> getDevicesByUser(Long userId) {
+        return deviceRepo.findByUserId(userId);
+    }
+
+    @Override
+    public Optional<DeviceProfile> findByDeviceId(String deviceId) {
+        return deviceRepo.findByDeviceId(deviceId);
+    }
+}
