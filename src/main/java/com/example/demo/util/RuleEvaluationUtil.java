@@ -31,8 +31,7 @@ public class RuleEvaluationUtil {
 
         for (PolicyRule rule : activeRules) {
 
-            // SIMPLE RULE EXAMPLE:
-            // If login FAILED → create violation
+            
             if ("FAILED".equalsIgnoreCase(event.getLoginStatus())) {
 
                 ViolationRecord violation = new ViolationRecord();

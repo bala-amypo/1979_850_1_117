@@ -21,7 +21,7 @@ public class DeviceProfileServiceImpl implements DeviceProfileService {
 
     @Override
     public DeviceProfile registerDevice(DeviceProfile device) {
-        // Check uniqueness per user
+        
         List<DeviceProfile> existingDevices = deviceRepo.findByUserId(device.getUserId());
         boolean exists = existingDevices.stream()
                 .anyMatch(d -> d.getDeviceId().equals(device.getDeviceId()));
@@ -29,7 +29,7 @@ public class DeviceProfileServiceImpl implements DeviceProfileService {
             throw new BadRequestException("Device with ID already exists for this user");
         }
 
-        // Set lastSeen to now
+       
         device.setLastSeen(LocalDateTime.now());
 
         return deviceRepo.save(device);
