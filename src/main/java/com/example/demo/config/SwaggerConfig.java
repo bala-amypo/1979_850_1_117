@@ -1,38 +1,21 @@
 package com.example.demo.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 @Configuration
-public class SecurityConfig {
+public class SwaggerConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public OpenAPI customOpenAPI() {
+        Server server = new Server();
+        server.setUrl("https://9199.pro604cr.amypo.ai");
 
-        http
-            // 🔴 DEFAULT PORTAL → CSRF disable MUST
-            .csrf(csrf -> csrf.disable())
-
-            // 🔴 No session, no login state
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-
-            // 🔴 ALLOW EVERYTHING (DEFAULT PORTAL RULE)
-            .authorizeHttpRequests(auth ->
-                auth.anyRequest().permitAll()
-            );
-
-        return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new OpenAPI()
+                .servers(List.of(server));
     }
 }
