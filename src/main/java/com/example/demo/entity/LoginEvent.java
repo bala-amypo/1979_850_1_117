@@ -22,13 +22,10 @@ public class LoginEvent {
 
     private LocalDateTime timestamp;
 
-    private String loginStatus; // SUCCESS / FAILED
-
-    // ✅ No-arg constructor (required by JPA)
+    private String loginStatus;
     public LoginEvent() {
     }
 
-    // ✅ Parameterized constructor
     public LoginEvent(Long userId,
                       String ipAddress,
                       String location,
@@ -44,7 +41,7 @@ public class LoginEvent {
         this.loginStatus = loginStatus;
     }
 
-    // ✅ Auto-set timestamp before insert
+    
     @PrePersist
     public void prePersist() {
         if (this.timestamp == null) {
@@ -52,8 +49,7 @@ public class LoginEvent {
         }
     }
 
-    // ===== GETTERS & SETTERS =====
-
+   
     public Long getId() {
         return id;
     }
