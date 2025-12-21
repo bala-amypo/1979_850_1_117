@@ -30,20 +30,18 @@ public class UserAccount {
     @Column(nullable = false)
     private String password;
 
-    private String role;   // ADMIN / USER / AUDITOR
+    private String role;   
 
-    private String status; // ACTIVE / SUSPENDED
+    private String status; 
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // ✅ No-args constructor
     public UserAccount() {
         this.status = "ACTIVE";
         this.role = "USER";
     }
 
-    // ✅ Parameterized constructor
     public UserAccount(String employeeId,
                        String username,
                        String email,
@@ -58,14 +56,10 @@ public class UserAccount {
         this.role = role != null ? role : "USER";
         this.status = status != null ? status : "ACTIVE";
     }
-
-    // ✅ Auto timestamp
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-
-    // ===== GETTERS & SETTERS =====
 
     public Long getId() {
         return id;
