@@ -45,7 +45,6 @@ public class DeviceProfile {
         this.lastSeen = LocalDateTime.now();
     }
 
-    // ✅ Automatically update lastSeen
     @PrePersist
     @PreUpdate
     public void updateLastSeen() {
