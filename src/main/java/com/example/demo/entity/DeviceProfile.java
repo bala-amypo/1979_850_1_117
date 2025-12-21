@@ -28,11 +28,9 @@ public class DeviceProfile {
 
     private Boolean isTrusted;
 
-    // ✅ No-arg constructor (JPA requires)
     public DeviceProfile() {
     }
 
-    // ✅ Parameterized constructor
     public DeviceProfile(Long userId,
                          String deviceId,
                          String deviceType,
