@@ -51,7 +51,6 @@ public class DeviceProfile {
         this.lastSeen = LocalDateTime.now();
     }
 
-    // ===== GETTERS & SETTERS =====
 
     public Long getId() {
         return id;
