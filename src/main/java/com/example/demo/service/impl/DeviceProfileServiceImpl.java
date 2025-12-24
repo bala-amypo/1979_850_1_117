@@ -1,12 +1,10 @@
-package com.example.demo.serviceimpl;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.DeviceProfile;
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.DeviceProfileRepository;
 import com.example.demo.service.DeviceProfileService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,29 +19,17 @@ public class DeviceProfileServiceImpl implements DeviceProfileService {
 
     @Override
     public DeviceProfile registerDevice(DeviceProfile device) {
-        
-        List<DeviceProfile> existingDevices = deviceRepo.findByUserId(device.getUserId());
-        boolean exists = existingDevices.stream()
-                .anyMatch(d -> d.getDeviceId().equals(device.getDeviceId()));
-        if (exists) {
-            throw new BadRequestException("Device with ID already exists for this user");
-        }
-
-       
-        device.setLastSeen(LocalDateTime.now());
-
         return deviceRepo.save(device);
     }
 
     @Override
     public DeviceProfile updateTrustStatus(Long id, boolean trust) {
-        DeviceProfile device = deviceRepo.findById(id)
-                .orElseThrow(() -> new BadRequestException("Device not found with id: " + id));
-
-        device.setIsTrusted(trust);
-        device.setLastSeen(LocalDateTime.now());
-
-        return deviceRepo.save(device);
+        DeviceProfile device = deviceRepo.findById(id).orElse(null);
+        if (device != null) {
+            device.setIsTrusted(trust);
+            return deviceRepo.save(device);
+        }
+        return null;
     }
 
     @Override

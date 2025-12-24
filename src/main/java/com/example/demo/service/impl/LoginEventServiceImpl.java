@@ -1,13 +1,11 @@
-package com.example.demo.serviceimpl;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.LoginEvent;
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.LoginEventRepository;
 import com.example.demo.service.LoginEventService;
 import com.example.demo.util.RuleEvaluationUtil;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,15 +21,9 @@ public class LoginEventServiceImpl implements LoginEventService {
 
     @Override
     public LoginEvent recordLogin(LoginEvent event) {
-        if (event.getIpAddress() == null || event.getDeviceId() == null) {
-            throw new BadRequestException("IP address and Device ID cannot be null");
-        }
-        if (event.getTimestamp() == null) {
-            event.setTimestamp(LocalDateTime.now());
-        }
-        LoginEvent savedEvent = loginRepo.save(event);
-        ruleEvaluator.evaluateLoginEvent(savedEvent);
-        return savedEvent;
+        LoginEvent saved = loginRepo.save(event);
+        ruleEvaluator.evaluateLoginEvent(saved);
+        return saved;
     }
 
     @Override

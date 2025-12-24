@@ -1,8 +1,6 @@
-package com.example.demo.serviceimpl;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.PolicyRule;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.PolicyRuleRepository;
 import com.example.demo.service.PolicyRuleService;
 import org.springframework.stereotype.Service;
@@ -21,21 +19,21 @@ public class PolicyRuleServiceImpl implements PolicyRuleService {
 
     @Override
     public PolicyRule createRule(PolicyRule rule) {
-        if (ruleRepo.findByRuleCode(rule.getRuleCode()).isPresent()) {
-            throw new BadRequestException("Rule code already exists");
-        }
         return ruleRepo.save(rule);
     }
 
     @Override
     public PolicyRule updateRule(Long id, PolicyRule updated) {
-        PolicyRule existing = ruleRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("PolicyRule", id));
-        existing.setDescription(updated.getDescription());
-        existing.setSeverity(updated.getSeverity());
-        existing.setConditionsJson(updated.getConditionsJson());
-        existing.setActive(updated.getActive());
-        return ruleRepo.save(existing);
+        PolicyRule rule = ruleRepo.findById(id).orElse(null);
+        if (rule != null) {
+            rule.setRuleCode(updated.getRuleCode());
+            rule.setDescription(updated.getDescription());
+            rule.setSeverity(updated.getSeverity());
+            rule.setConditionsJson(updated.getConditionsJson());
+            rule.setActive(updated.getActive());
+            return ruleRepo.save(rule);
+        }
+        return null;
     }
 
     @Override
