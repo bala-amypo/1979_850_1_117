@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "login_events")
-public class LoginEvent {
+@Table(
+        name = "device_profiles",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "device_id"})
+)
+public class DeviceProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,42 +17,41 @@ public class LoginEvent {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    private String ipAddress;
-
-    private String location;
-
+    @Column(name = "device_id", nullable = false)
     private String deviceId;
 
-    private LocalDateTime timestamp;
+    private String deviceType;
 
-    private String loginStatus;
-    public LoginEvent() {
+    private String osVersion;
+
+    private LocalDateTime lastSeen;
+
+    private Boolean isTrusted;
+
+    public DeviceProfile() {
     }
 
-    public LoginEvent(Long userId,
-                      String ipAddress,
-                      String location,
-                      String deviceId,
-                      LocalDateTime timestamp,
-                      String loginStatus) {
+    public DeviceProfile(Long userId,
+                         String deviceId,
+                         String deviceType,
+                         String osVersion,
+                         Boolean isTrusted) {
 
         this.userId = userId;
-        this.ipAddress = ipAddress;
-        this.location = location;
         this.deviceId = deviceId;
-        this.timestamp = timestamp != null ? timestamp : LocalDateTime.now();
-        this.loginStatus = loginStatus;
+        this.deviceType = deviceType;
+        this.osVersion = osVersion;
+        this.isTrusted = isTrusted != null ? isTrusted : false;
+        this.lastSeen = LocalDateTime.now();
     }
 
-    
     @PrePersist
-    public void prePersist() {
-        if (this.timestamp == null) {
-            this.timestamp = LocalDateTime.now();
-        }
+    @PreUpdate
+    public void updateLastSeen() {
+        this.lastSeen = LocalDateTime.now();
     }
 
-   
+
     public Long getId() {
         return id;
     }
@@ -66,22 +68,6 @@ public class LoginEvent {
         this.userId = userId;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public String getDeviceId() {
         return deviceId;
     }
@@ -90,19 +76,35 @@ public class LoginEvent {
         this.deviceId = deviceId;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public String getDeviceType() {
+        return deviceType;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
-    public String getLoginStatus() {
-        return loginStatus;
+    public String getOsVersion() {
+        return osVersion;
     }
 
-    public void setLoginStatus(String loginStatus) {
-        this.loginStatus = loginStatus;
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion;
+    }
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    public Boolean getIsTrusted() {
+        return isTrusted;
+    }
+
+    public void setIsTrusted(Boolean isTrusted) {
+        this.isTrusted = isTrusted;
     }
 }
