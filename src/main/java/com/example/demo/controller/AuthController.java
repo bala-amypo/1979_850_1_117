@@ -38,7 +38,7 @@ public class AuthController {
         user.setEmployeeId(request.getEmployeeId());
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(request.getPassword()); // Don't encode here, let service handle it
         user.setRole(request.getRole() != null ? request.getRole() : "USER");
 
         return ResponseEntity.ok(userAccountService.createUser(user));
@@ -56,7 +56,8 @@ public class AuthController {
 
         UserAccount user = userAccountService
                 .findByUsername(request.getUsernameOrEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseGet(() -> userAccountService.findByEmail(request.getUsernameOrEmail())
+                        .orElseThrow(() -> new RuntimeException("User not found")));
 
         String token = jwtUtil.generateToken(
                 user.getUsername(),
