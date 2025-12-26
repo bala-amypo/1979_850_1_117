@@ -2,7 +2,6 @@ package com.example.demo.config;
 
 import com.example.demo.security.JwtAuthenticationEntryPoint;
 import com.example.demo.security.JwtAuthenticationFilter;
-import com.example.demo.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,8 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,71 +16,65 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtFilter;
-    private final JwtAuthenticationEntryPoint entryPoint;
-    private final CustomUserDetailsService userDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtFilter,
-            JwtAuthenticationEntryPoint entryPoint,
-            CustomUserDetailsService userDetailsService) {
-        this.jwtFilter = jwtFilter;
-        this.entryPoint = entryPoint;
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                          JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            // CSRF disable (IMPORTANT for Swagger & Postman)
+            // CSRF disable (REST API)
             .csrf(csrf -> csrf.disable())
 
             // Exception handling
             .exceptionHandling(ex -> ex
-                    .authenticationEntryPoint(entryPoint)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
             )
 
-            // Session = STATELESS (JWT)
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            // Stateless session (JWT)
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
             // Authorization rules
             .authorizeHttpRequests(auth -> auth
 
-                    // 🔓 AUTH APIs (NO TOKEN)
-                    .requestMatchers(
-                            "/auth/**"
-                    ).permitAll()
+                // ✅ PUBLIC APIs
+                .requestMatchers(
+                        "/auth/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/error",
+                        "/actuator/**"
+                ).permitAll()
 
-                    // 🔓 SWAGGER
-                    .requestMatchers(
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html"
-                    ).permitAll()
+                // ✅ PREVIEW / HEALTH CHECK
+                .requestMatchers("/").permitAll()
 
-                    // 🔒 EVERYTHING ELSE NEEDS TOKEN
-                    .anyRequest().authenticated()
+                // 🔐 Everything else needs JWT
+                .anyRequest().authenticated()
             );
 
         // JWT Filter
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
+        );
 
         return http.build();
     }
 
-    // AuthenticationManager
+    // AuthenticationManager Bean
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
-    }
-
-    // Password Encoder
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
