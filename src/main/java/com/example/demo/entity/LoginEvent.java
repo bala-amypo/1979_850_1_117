@@ -1,108 +1,35 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "login_events")
 public class LoginEvent {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "user_id", nullable = false)
     private Long userId;
-
+    private String loginStatus;
     private String ipAddress;
-
-    private String location;
-
     private String deviceId;
-
+    private String location;
     private LocalDateTime timestamp;
 
-    private String loginStatus;
-    public LoginEvent() {
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public LoginEvent(Long userId,
-                      String ipAddress,
-                      String location,
-                      String deviceId,
-                      LocalDateTime timestamp,
-                      String loginStatus) {
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-        this.userId = userId;
-        this.ipAddress = ipAddress;
-        this.location = location;
-        this.deviceId = deviceId;
-        this.timestamp = timestamp != null ? timestamp : LocalDateTime.now();
-        this.loginStatus = loginStatus;
-    }
+    public String getLoginStatus() { return loginStatus; }
+    public void setLoginStatus(String loginStatus) { this.loginStatus = loginStatus; }
 
-    
-    @PrePersist
-    public void prePersist() {
-        if (this.timestamp == null) {
-            this.timestamp = LocalDateTime.now();
-        }
-    }
+    public String getIpAddress() { return ipAddress; }
+    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
 
-   
-    public Long getId() {
-        return id;
-    }
+    public String getDeviceId() { return deviceId; }
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getLoginStatus() {
-        return loginStatus;
-    }
-
-    public void setLoginStatus(String loginStatus) {
-        this.loginStatus = loginStatus;
-    }
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 }
