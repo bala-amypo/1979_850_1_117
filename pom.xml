@@ -10,60 +10,52 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>demo</name>
-    <description>Spring Boot Demo Project</description>
-
-    <!-- MUST hardcode Spring Boot parent version -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <properties>
         <java.version>17</java.version>
-        <spring.security.version>6.2.0</spring.security.version>
-        <jjwt.version>0.9.1</jjwt.version>
-        <mockito.version>5.5.0</mockito.version>
-        <testng.version>7.8.0</testng.version>
     </properties>
 
     <dependencies>
 
-       <dependency>
-         <groupId>io.jsonwebtoken</groupId>
-         <artifactId>jjwt</artifactId>
-         <version>0.9.1</version>
-       </dependency>
-
-        <!-- Spring Boot Starter (Core) -->
+        <!-- Spring Core -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- Spring Boot Web (ResponseEntity, REST Controllers) -->
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Security Crypto -->
+        <!-- Password Encoder -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <version>${spring.security.version}</version>
         </dependency>
 
-        <!-- JJWT -->
+        <!-- JWT (REQUIRED FOR TESTS) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>${jjwt.version}</version>
+            <version>0.9.1</version>
         </dependency>
 
-        <!-- Swagger / OpenAPI -->
+        <!-- REQUIRED FOR JJWT 0.9.1 ON JAVA 17 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
+        <!-- Swagger -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -74,7 +66,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
+            <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -82,37 +74,17 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <version>7.8.0</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Lombok (optional) -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <!-- Maven Compiler Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
             </plugin>
         </plugins>
     </build>
