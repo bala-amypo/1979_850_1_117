@@ -16,7 +16,7 @@ public class JwtUtil {
 
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
-    public String generateToken(String username) {
+    public String generateToken(String username, Long userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
