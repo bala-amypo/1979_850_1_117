@@ -11,10 +11,10 @@ import java.util.List;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI customOpenAPI() {
-        Server server = new Server();
-        server.setUrl("https://9280.408procr.amypo.ai/");
+    public OpenAPI openAPI() {
         return new OpenAPI()
-                .servers(List.of(server));
+                .servers(List.of(
+                        new Server().url("https://9280.408procr.amypo.ai/")
+                ));
     }
 }
