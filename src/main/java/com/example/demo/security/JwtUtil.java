@@ -13,6 +13,12 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    public JwtUtil(String secret, long expiration, long refreshExpiration, boolean enabled) {
+    this.secret = secret;
+    this.expiration = expiration;
+}
+
+
     
     private static final String SECRET_KEY =
             "THIS_IS_A_VERY_SECURE_SECRET_KEY_256_BITS_LONG";
