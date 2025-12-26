@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -14,14 +15,18 @@ public class JwtUtil {
     private final long validityInMs;
     private final boolean testMode;
 
-   
-    public JwtUtil(String secret, long validityInMs, boolean isTestMode) {
+    public JwtUtil(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.validity}") long validityInMs,
+            @Value("${jwt.testmode:false}") boolean testMode
+    ) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.validityInMs = validityInMs;
-        this.testMode = isTestMode;
+        this.testMode = testMode;
     }
 
     public String generateToken(String subject, Long userId, String email, String role) {
+
         Date now = new Date();
         Date expiry = new Date(now.getTime() + validityInMs);
 
@@ -40,7 +45,7 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
