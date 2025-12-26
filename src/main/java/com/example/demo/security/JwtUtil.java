@@ -12,34 +12,30 @@ public class JwtUtil {
 
     private final Key key;
     private final long validityInMs;
-    private final boolean isTestMode;
+    private final boolean testMode;
 
-    // ✅ TEST EXPECTED CONSTRUCTOR
+   
     public JwtUtil(String secret, long validityInMs, boolean isTestMode) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.validityInMs = validityInMs;
-        this.isTestMode = isTestMode;
+        this.testMode = isTestMode;
     }
 
-    // ✅ TEST EXPECTED METHOD
     public String generateToken(String subject, Long userId, String email, String role) {
-        Claims claims = Jwts.claims().setSubject(subject);
-        claims.put("userId", userId);
-        claims.put("email", email);
-        claims.put("role", role);
-
         Date now = new Date();
         Date expiry = new Date(now.getTime() + validityInMs);
 
         return Jwts.builder()
-                .setClaims(claims)
+                .setSubject(subject)
+                .claim("userId", userId)
+                .claim("email", email)
+                .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ TEST EXPECTED METHOD
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
