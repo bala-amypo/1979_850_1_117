@@ -3,37 +3,19 @@ package com.example.demo.controller;
 import com.example.demo.entity.DeviceProfile;
 import com.example.demo.service.DeviceProfileService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/devices")
 public class DeviceProfileController {
 
-    private final DeviceProfileService deviceProfileService;
+    private final DeviceProfileService deviceService;
 
-    public DeviceProfileController(DeviceProfileService deviceProfileService) {
-        this.deviceProfileService = deviceProfileService;
+    public DeviceProfileController(DeviceProfileService deviceService) {
+        this.deviceService = deviceService;
     }
 
-    @PostMapping
-    public ResponseEntity<DeviceProfile> registerDevice(@RequestBody DeviceProfile device) {
-        return ResponseEntity.ok(deviceProfileService.registerDevice(device));
-    }
-
-    @PutMapping("/{id}/trust")
-    public ResponseEntity<DeviceProfile> updateTrust(@PathVariable Long id, @RequestParam boolean trust) {
-        return ResponseEntity.ok(deviceProfileService.updateTrustStatus(id, trust));
-    }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<DeviceProfile>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(deviceProfileService.getDevicesByUser(userId));
-    }
-
-    @GetMapping("/lookup/{deviceId}")
-    public ResponseEntity<DeviceProfile> getByDevice(@PathVariable String deviceId) {
-        return ResponseEntity.of(deviceProfileService.findByDeviceId(deviceId));
+    public ResponseEntity<DeviceProfile> lookup(String deviceId) {
+        Optional<DeviceProfile> device = deviceService.findByDeviceId(deviceId);
+        return ResponseEntity.ok(device.orElse(null));
     }
 }

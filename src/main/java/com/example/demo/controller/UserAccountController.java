@@ -1,29 +1,22 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.UserAccount;
-import com.example.demo.repository.UserAccountRepository;
-import org.springframework.web.bind.annotation.*;
+import com.example.demo.service.UserAccountService;
+import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/users")
 public class UserAccountController {
 
-    private final UserAccountRepository repo;
+    private final UserAccountService userService;
 
-    public UserAccountController(UserAccountRepository repo) {
-        this.repo = repo;
+    public UserAccountController(UserAccountService userService) {
+        this.userService = userService;
     }
 
-    // ✅ TEST EXPECTS THIS METHOD
-    @PostMapping
-    public UserAccount create(@RequestBody UserAccount user) {
-        return repo.save(user);
+    public ResponseEntity<UserAccount> create(UserAccount user) {
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
-    @GetMapping
-    public List<UserAccount> all() {
-        return repo.findAll();
+    public ResponseEntity<UserAccount> getById(Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 }
