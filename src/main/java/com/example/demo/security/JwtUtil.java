@@ -10,40 +10,69 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "mysecretkeymysecretkeymysecretkey12345";
-    private static final long EXPIRATION_TIME = 86400000; // 1 day
+    private final Key key;
+    private final long expiration;
+    private final boolean enabled;
 
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    // ✅ Constructor REQUIRED by Test Suite
+    public JwtUtil(String secret, long expiration, boolean enabled) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.expiration = expiration;
+        this.enabled = enabled;
     }
 
-    public String generateToken(String username) {
+    // ✅ Generate Token (EXACT signature expected)
+    public String generateToken(String username, Long userId, String email, String role) {
+        if (!enabled) return "";
+
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId", userId)
+                .claim("email", email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String getUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
+    // ✅ Validate Token
     public boolean validateToken(String token) {
         try {
+            if (!enabled) return false;
+
             Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
+                    .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (Exception e) {
             return false;
         }
+    }
+
+    // ✅ Extract Email
+    public String getEmail(String token) {
+        return getClaims(token).get("email", String.class);
+    }
+
+    // ✅ Extract Role
+    public String getRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
+    // ✅ Extract User ID
+    public Long getUserId(String token) {
+        return getClaims(token).get("userId", Long.class);
+    }
+
+    // 🔒 Helper Method
+    private Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
