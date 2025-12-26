@@ -3,76 +3,78 @@ package com.example.demo.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.JwtException;
 
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 public class JwtUtil {
 
-    private final Key key;
+    private final String secret;
     private final long expiry;
     private final boolean enabled;
 
     public JwtUtil(String secret, long expiry, boolean enabled) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.secret = secret;
         this.expiry = expiry;
         this.enabled = enabled;
     }
 
-    // ----------------------------
-    // TOKEN GENERATION
-    // ----------------------------
-    public String generateToken(String email, Long userId, String role) {
-        if (!enabled) {
-            return null;
-        }
+    // -------------------------------------------------
+    // GENERATE TOKEN (USED IN TESTS)
+    // -------------------------------------------------
+    public String generateToken(String username, Long userId, String email, String role) {
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(username)
                 .claim("userId", userId)
+                .claim("email", email)
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiry))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(
+                        SignatureAlgorithm.HS256,
+                        secret.getBytes(StandardCharsets.UTF_8)
+                )
                 .compact();
     }
 
-    // ----------------------------
-    // VALIDATION
-    // ----------------------------
+    // -------------------------------------------------
+    // VALIDATE TOKEN
+    // -------------------------------------------------
     public boolean validateToken(String token) {
         try {
-            extractAllClaims(token);
+            Jwts.parser()
+                    .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+                    .parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    // ----------------------------
-    // EXTRACTION METHODS
-    // ----------------------------
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
+    // -------------------------------------------------
+    // INTERNAL: EXTRACT CLAIMS
+    // -------------------------------------------------
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    public String extractRole(String token) {
+    // -------------------------------------------------
+    // EXTRACT CLAIMS METHODS (USED IN TESTS)
+    // -------------------------------------------------
+    public String getEmail(String token) {
+        return extractAllClaims(token).get("email", String.class);
+    }
+
+    public String getRole(String token) {
         return extractAllClaims(token).get("role", String.class);
     }
 
-    public Long extractUserId(String token) {
+    public Long getUserId(String token) {
         return extractAllClaims(token).get("userId", Long.class);
-    }
-
-    // ----------------------------
-    // INTERNAL
-    // ----------------------------
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
     }
 }
