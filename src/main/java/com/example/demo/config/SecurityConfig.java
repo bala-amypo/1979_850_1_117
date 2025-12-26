@@ -23,20 +23,20 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    // 🔐 Password Encoder (IMPORTANT)
+    // ✅ REQUIRED for register & login
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 🔐 Authentication Manager
+    // ✅ REQUIRED for authentication
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
-    // 🔐 Security Filter Chain
+    // ✅ MAIN SECURITY LOGIC
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -46,7 +46,8 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                // ✅ Swagger allow
+
+                // 🔓 Swagger (DO NOT TOUCH SwaggerConfig)
                 .requestMatchers(
                         "/swagger-ui.html",
                         "/swagger-ui/**",
@@ -54,17 +55,17 @@ public class SecurityConfig {
                         "/api-docs/**"
                 ).permitAll()
 
-                // ✅ Auth APIs allow
+                // 🔓 Auth APIs
                 .requestMatchers(
                         "/auth/register",
                         "/auth/login"
                 ).permitAll()
 
-                // ❌ Others need token
+                // 🔐 Everything else needs token
                 .anyRequest().authenticated()
             );
 
-        // ✅ JWT filter
+        // ✅ JWT filter must be before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
