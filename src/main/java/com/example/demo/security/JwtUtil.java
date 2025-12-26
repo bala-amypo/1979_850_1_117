@@ -15,9 +15,7 @@ public class JwtUtil {
         this.enabled = enabled;
     }
 
-    // -----------------------------
-    // GENERATE TOKEN (4 claims)
-    // -----------------------------
+    // Generate token with 4 claims
     public String generateToken(String username, Long userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(username)
@@ -30,21 +28,18 @@ public class JwtUtil {
                 .compact();
     }
 
-    // -----------------------------
-    // VALIDATE TOKEN
-    // -----------------------------
+    // Validate token
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException |
+                 SignatureException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    // -----------------------------
-    // EXTRACT CLAIMS
-    // -----------------------------
+    // Extract claims
     private Claims claims(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -61,6 +56,13 @@ public class JwtUtil {
     }
 
     public Long getUserId(String token) {
-        return claims(token).get("userId", Long.class);
+        Object value = claims(token).get("userId");
+        if (value instanceof Integer) {
+            return ((Integer) value).longValue();
+        } else if (value instanceof Long) {
+            return (Long) value;
+        } else {
+            return null;
+        }
     }
 }
