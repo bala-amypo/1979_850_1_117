@@ -59,12 +59,8 @@ public class AuthController {
                 .orElseGet(() -> userAccountService.findByEmail(request.getUsernameOrEmail())
                         .orElseThrow(() -> new RuntimeException("User not found")));
 
-        String token = jwtUtil.generateToken(
-                user.getUsername(),
-                user.getId(),
-                user.getEmail(),
-                user.getRole()
-        );
+       String token = jwtUtil.generateToken(user.getUsername());
+
 
         return ResponseEntity.ok(
                 new JwtResponse(token, user.getId(), user.getEmail(), user.getRole())
