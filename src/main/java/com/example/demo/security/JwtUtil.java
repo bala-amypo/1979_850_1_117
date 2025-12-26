@@ -10,45 +10,36 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String secret = "mysecretkeymysecretkeymysecretkey12345";
-    private final long expiration = 1000 * 60 * 60 * 10; // 10 hours
+    // ✅ ADD THESE
+    private final String secret = "mysecretkeymysecretkeymysecretkey12";
+    private final long expiration = 86400000; // 1 day
 
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
-    }
+    private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
-    // ✅ USED BY AUTH CONTROLLER + TESTS
-    public String generateToken(String username, Long userId, String email, String role) {
+    public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("userId", userId)
-                .claim("email", email)
-                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ USED BY FILTER
-    public String getUsername(String token) {
-        return getClaims(token).getSubject();
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateToken(String token) {
         try {
-            getClaims(token);
+            extractUsername(token);
             return true;
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
     }
 }
