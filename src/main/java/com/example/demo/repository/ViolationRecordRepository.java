@@ -1,10 +1,12 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.ViolationRecord;
-import java.util.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ViolationRecordRepository {
-    ViolationRecord save(ViolationRecord violation);
-    Optional<ViolationRecord> findById(Long id);
+import java.util.List;
+
+@Repository
+public interface ViolationRecordRepository extends JpaRepository<ViolationRecord, Long> {
     List<ViolationRecord> findByResolvedFalse();
 }

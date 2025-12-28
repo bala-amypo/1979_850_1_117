@@ -1,22 +1,28 @@
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
 import java.util.Date;
 
+@Component
 public class JwtUtil {
 
-    private String secret;
-    private long expiry;
-    private boolean enabled;
+    private final Key key;
+    private final long validity; // milliseconds
+    private final boolean testMode;
 
-    // NO-ARG constructor (for Spring)
-    public JwtUtil() {}
-
-    // ARG constructor (for Tests)
-    public JwtUtil(String secret, long expiry, boolean enabled) {
-        this.secret = secret;
-        this.expiry = expiry;
-        this.enabled = enabled;
+    public JwtUtil(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.validity}") long validity,
+            @Value("${jwt.testmode}") boolean testMode
+    ) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.validity = validity;
+        this.testMode = testMode;
     }
 
     public String generateToken(String username, Long userId, String email, String role) {
@@ -26,38 +32,29 @@ public class JwtUtil {
                 .claim("email", email)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiry))
-                .signWith(SignatureAlgorithm.HS256, secret.getBytes())
+                .setExpiration(new Date(System.currentTimeMillis() + validity))
+                .signWith(key)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                .setSigningKey(secret.getBytes())
-                .parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    private Claims claims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret.getBytes())
-                .parseClaimsJws(token)
-                .getBody();
+    public Long getUserId(String token) {
+        return ((Number) Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("userId")).longValue();
     }
 
     public String getEmail(String token) {
-        return claims(token).get("email", String.class);
+        return (String) Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("email");
     }
 
     public String getRole(String token) {
-        return claims(token).get("role", String.class);
-    }
-
-    public Long getUserId(String token) {
-        return claims(token).get("userId", Long.class);
+        return (String) Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("role");
     }
 }
