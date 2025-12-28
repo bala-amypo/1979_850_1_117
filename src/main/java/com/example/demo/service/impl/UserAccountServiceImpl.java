@@ -1,18 +1,47 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.UserAccount;
+import com.example.demo.repository.UserAccountRepository;
+import com.example.demo.service.UserAccountService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class UserAccountServiceImpl {
+public class UserAccountServiceImpl implements UserAccountService {
 
-    public UserAccount save(UserAccount u) {
+    private final UserAccountRepository repo;
 
-        
-        System.out.println(u.getPassword());
+    public UserAccountServiceImpl(UserAccountRepository repo) {
+        this.repo = repo;
+    }
 
-        u.setStatus("ACTIVE");
+    // -------- CREATE ----------
+    @Override
+    public UserAccount createUser(UserAccount user) {
+        return repo.save(user); // ❌ null return illa
+    }
 
-        return u;
+    // -------- GET BY ID ----------
+    @Override
+    public UserAccount getUserById(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // -------- GET ALL ----------
+    @Override
+    public List<UserAccount> getAllUsers() {
+        return repo.findAll(); // test expect this
+    }
+
+    // -------- UPDATE STATUS ----------
+    @Override
+    public UserAccount updateStatus(Long id, String status) {
+        UserAccount user = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setStatus(status);
+        return repo.save(user);
     }
 }
