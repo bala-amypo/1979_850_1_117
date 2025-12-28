@@ -4,46 +4,38 @@ import com.example.demo.entity.UserAccount;
 import com.example.demo.repository.UserAccountRepository;
 import com.example.demo.service.UserAccountService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
-@Service
 public class UserAccountServiceImpl implements UserAccountService {
 
-    private final UserAccountRepository userRepo;
-    private final PasswordEncoder passwordEncoder;
+    private final UserAccountRepository repo;
+    private final PasswordEncoder encoder;
 
-    public UserAccountServiceImpl(UserAccountRepository userRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
+    public UserAccountServiceImpl(UserAccountRepository repo, PasswordEncoder encoder) {
+        this.repo = repo;
+        this.encoder = encoder;
     }
 
     @Override
-    public UserAccount createUser(UserAccount user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepo.save(user);
+    public UserAccount createUser(UserAccount u) {
+        u.setPassword(encoder.encode(u.getPassword()));
+        return repo.save(u);
     }
 
     @Override
     public UserAccount getUserById(Long id) {
-        return userRepo.findById(id).orElse(null);
+        return repo.findById(id).orElse(null);
     }
 
     @Override
     public UserAccount updateUserStatus(Long id, String status) {
-        Optional<UserAccount> userOpt = userRepo.findById(id);
-        if (userOpt.isPresent()) {
-            UserAccount u = userOpt.get();
-            u.setStatus(status);
-            return userRepo.save(u);
-        }
-        return null;
+        UserAccount u = repo.findById(id).orElse(null);
+        u.setStatus(status);
+        return repo.save(u);
     }
 
     @Override
     public List<UserAccount> getAllUsers() {
-        return userRepo.findAll();
+        return repo.findAll();
     }
 }
