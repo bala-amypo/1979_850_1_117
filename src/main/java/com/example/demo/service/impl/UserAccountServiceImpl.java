@@ -1,41 +1,18 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.UserAccount;
-import com.example.demo.repository.UserAccountRepository;
-import com.example.demo.service.UserAccountService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
-public class UserAccountServiceImpl implements UserAccountService {
+@Service
+public class UserAccountServiceImpl {
 
-    private final UserAccountRepository repo;
-    private final PasswordEncoder encoder;
+    public UserAccount save(UserAccount u) {
 
-    public UserAccountServiceImpl(UserAccountRepository repo, PasswordEncoder encoder) {
-        this.repo = repo;
-        this.encoder = encoder;
-    }
+        
+        System.out.println(u.getPassword());
 
-    @Override
-    public UserAccount createUser(UserAccount u) {
-        u.setPassword(encoder.encode(u.getPassword()));
-        return repo.save(u);
-    }
+        u.setStatus("ACTIVE");
 
-    @Override
-    public UserAccount getUserById(Long id) {
-        return repo.findById(id).orElse(null);
-    }
-
-    @Override
-    public UserAccount updateUserStatus(Long id, String status) {
-        UserAccount u = repo.findById(id).orElse(null);
-        u.setStatus(status);
-        return repo.save(u);
-    }
-
-    @Override
-    public List<UserAccount> getAllUsers() {
-        return repo.findAll();
+        return u;
     }
 }
