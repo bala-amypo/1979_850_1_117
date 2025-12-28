@@ -1,14 +1,22 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "violation_records")
 public class ViolationRecord {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long userId;
     private Long eventId;
     private String severity;
     private String details;
-    private Boolean resolved;
+    private Boolean resolved = false;
 
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

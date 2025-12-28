@@ -1,13 +1,31 @@
 package com.example.demo.dto;
 
-public class LoginRequestDTO {
-    private String email;
-    private String password;
+import java.time.LocalDateTime;
 
-   
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+public class LoginEventDTO {
+    private Long userId;
+    private String deviceId;
+    private String ipAddress;
+    private String location;
+    private String loginStatus; // e.g., SUCCESS / FAILED
+    private LocalDateTime timestamp;
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    // Getters and Setters
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public String getDeviceId() { return deviceId; }
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+
+    public String getIpAddress() { return ipAddress; }
+    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public String getLoginStatus() { return loginStatus; }
+    public void setLoginStatus(String loginStatus) { this.loginStatus = loginStatus; }
+
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 }
