@@ -10,12 +10,10 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // SAME secret used in test cases
     private final String secret = "mysecretkey123456";
 
-    private final long expiration = 1000 * 60 * 60; // 1 hour
+    private final long expiration = 1000 * 60 * 60;
 
-    // ================== GENERATE TOKEN ==================
     public String generateToken(String email, Long userId, String role) {
 
         return Jwts.builder()
@@ -28,7 +26,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ================== VALIDATE TOKEN ==================
     public boolean validateToken(String token) {
         try {
             getClaims(token);
