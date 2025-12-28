@@ -23,7 +23,7 @@
         <java.version>17</java.version>
         <springdoc.version>2.2.0</springdoc.version>
         <mockito.version>5.5.0</mockito.version>
-        <testng.version>7.8.0</testng.version> <!-- Valid TestNG version -->
+        <testng.version>7.8.0</testng.version> <!-- valid version -->
     </properties>
 
     <dependencies>
@@ -77,7 +77,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- SpringDoc OpenAPI / Swagger -->
+        <!-- SpringDoc OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
