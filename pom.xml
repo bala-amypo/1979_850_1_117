@@ -27,6 +27,12 @@
     </properties>
 
     <dependencies>
+    <dependency>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+          <version>7.8.0</version>
+          <scope>test</scope>
+        </dependency>
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -93,12 +99,7 @@
         </dependency>
 
         <!-- TestNG -->
-        <dependency>
-    <groupId>org.testng</groupId>
-    <artifactId>testng</artifactId>
-    <version>7.8.0</version>
-    <scope>test</scope>
-</dependency>
+        
 
         <dependency>
             <groupId>org.testng</groupId>
