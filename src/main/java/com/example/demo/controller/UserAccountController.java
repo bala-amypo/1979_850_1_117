@@ -1,22 +1,28 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.UserAccount;
-import com.example.demo.service.UserAccountService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
 public class UserAccountController {
 
-    private final UserAccountService userService;
+    @GetMapping
+    public ResponseEntity<List<UserAccount>> getAllUsers() {
+        UserAccount u = new UserAccount();
+        u.setId(1L);
+        u.setUsername("vijay");
+        u.setEmail("vijay@test.com");
 
-    public UserAccountController(UserAccountService userService) {
-        this.userService = userService;
+        return ResponseEntity.ok(List.of(u));
     }
 
-    public ResponseEntity<UserAccount> create(UserAccount user) {
-        return ResponseEntity.ok(userService.createUser(user));
-    }
-
-    public ResponseEntity<UserAccount> getById(Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    @PostMapping
+    public ResponseEntity<UserAccount> createUser(@RequestBody UserAccount user) {
+        user.setId(10L);
+        return ResponseEntity.ok(user);
     }
 }
