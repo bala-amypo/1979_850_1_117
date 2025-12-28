@@ -8,27 +8,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/policies")
+@RequestMapping("/rules")
 public class PolicyRuleController {
 
-    private final PolicyRuleService service;
+    private final PolicyRuleService ruleService;
 
-    public PolicyRuleController(PolicyRuleService service) {
-        this.service = service;
+    public PolicyRuleController(PolicyRuleService ruleService) {
+        this.ruleService = ruleService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<PolicyRule>> getAll() {
-        return ResponseEntity.ok(service.getAllRules());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<PolicyRule> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getRuleById(id));
-    }
-
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<PolicyRule> create(@RequestBody PolicyRule rule) {
-        return ResponseEntity.ok(service.createRule(rule));
+        return ResponseEntity.ok(ruleService.createRule(rule));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PolicyRule>> all() {
+        return ResponseEntity.ok(ruleService.getAllRules());
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<PolicyRule>> active() {
+        return ResponseEntity.ok(ruleService.getActiveRules());
     }
 }
