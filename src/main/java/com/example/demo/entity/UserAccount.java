@@ -1,12 +1,20 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
+
+@Entity
 public class UserAccount {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
+
     private String email;
     private String password;
+    private String role;
     private String status;
+
+    // -------- GETTERS & SETTERS --------
 
     public Long getId() {
         return id;
@@ -14,14 +22,6 @@ public class UserAccount {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {
@@ -32,7 +32,7 @@ public class UserAccount {
         this.email = email;
     }
 
-    public String getPassword() {
+    public String getPassword() {   // ⭐ MUST
         return password;
     }
 
@@ -40,7 +40,15 @@ public class UserAccount {
         this.password = password;
     }
 
-    public String getStatus() {
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getStatus() {     // ⭐ MUST
         return status;
     }
 
