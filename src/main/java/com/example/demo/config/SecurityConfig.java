@@ -1,29 +1,26 @@
-package com.example.demo.security;
+package com.example.demo.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import com.example.demo.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
 public class SecurityConfig {
 
-    @Bean
+    private static final String JWT_SECRET = "TestSecretKeyForJWT1234567890";
+    private static final long JWT_EXPIRY = 3600000L; // 1 hour
+    private static final boolean JWT_ENABLED = true;
+
+    /**
+     * Returns PasswordEncoder instance for services.
+     */
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .httpBasic();
-        return http.build();
+    /**
+     * Returns a JwtUtil instance for services or tests.
+     */
+    public JwtUtil jwtUtil() {
+        return new JwtUtil(JWT_SECRET, JWT_EXPIRY, JWT_ENABLED);
     }
 }
