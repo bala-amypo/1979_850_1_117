@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class UserAccount {
@@ -9,10 +10,14 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String employeeId;
+    private String username;
     private String email;
     private String password;
     private String role;
     private String status;
+
+    private LocalDateTime createdAt;
 
     // -------- GETTERS & SETTERS --------
 
@@ -24,6 +29,22 @@ public class UserAccount {
         this.id = id;
     }
 
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {   // ⭐ REQUIRED
+        this.username = username;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -32,7 +53,7 @@ public class UserAccount {
         this.email = email;
     }
 
-    public String getPassword() {   // ⭐ MUST
+    public String getPassword() {                 // ⭐ REQUIRED
         return password;
     }
 
@@ -48,11 +69,19 @@ public class UserAccount {
         this.role = role;
     }
 
-    public String getStatus() {     // ⭐ MUST
+    public String getStatus() {                   // ⭐ REQUIRED
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(String status) {        // ⭐ REQUIRED
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

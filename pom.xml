@@ -22,6 +22,12 @@
     </properties>
 
     <dependencies>
+    <!-- JPA + Hibernate -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
 
         <!-- Spring Core -->
         <dependency>
