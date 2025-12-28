@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.UserAccount;
+import com.example.demo.service.UserAccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,19 +11,23 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserAccountController {
 
-    @GetMapping
-    public ResponseEntity<List<UserAccount>> getAllUsers() {
-        UserAccount u = new UserAccount();
-        u.setId(1L);
-        u.setUsername("vijay");
-        u.setEmail("vijay@test.com");
+    private final UserAccountService userAccountService;
 
-        return ResponseEntity.ok(List.of(u));
+    public UserAccountController(UserAccountService userAccountService) {
+        this.userAccountService = userAccountService;
     }
 
+    // GET ALL USERS
+    @GetMapping
+    public ResponseEntity<List<UserAccount>> getAllUsers() {
+        List<UserAccount> users = userAccountService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    // CREATE USER
     @PostMapping
     public ResponseEntity<UserAccount> createUser(@RequestBody UserAccount user) {
-        user.setId(10L);
-        return ResponseEntity.ok(user);
+        UserAccount savedUser = userAccountService.createUser(user);
+        return ResponseEntity.ok(savedUser);
     }
 }
